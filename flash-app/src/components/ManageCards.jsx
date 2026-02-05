@@ -3,16 +3,21 @@ import { useAtom } from 'jotai';
 import { flashcardsAtom } from '../store/atoms';
 import { useLocation } from 'wouter';
 
-function CardItem({ card, onUpdate, onDelete }) {
+function CardItem({ card, onUpdate, onDelete, showBack }) {
   return (
     <div className="col-md-6 col-lg-4 mb-4">
       <div className="card h-100 shadow-sm">
         <div className="card-body">
           <h6 className="card-subtitle mb-2 text-muted">Front</h6>
           <p className="card-text">{card.front}</p>
-          <hr />
-          <h6 className="card-subtitle mb-2 text-muted">Back</h6>
-          <p className="card-text">{card.back}</p>
+          
+          {showBack && (
+            <>
+              <hr />
+              <h6 className="card-subtitle mb-2 text-muted">Back</h6>
+              <p className="card-text">{card.back}</p>
+            </>
+          )}
         </div>
         <div className="card-footer bg-transparent border-top-0">
           <div className="d-flex gap-2">
@@ -29,7 +34,7 @@ function ManageCards() {
   const [cardToDelete, setCardToDelete] = useState(null);
   const [flashcards, setFlashcards] = useAtom(flashcardsAtom);
   const [, setLocation] = useLocation();
-  const [showBacks, setShowBacks] = useState(false);
+  const [showBacks, setShowBacks] = useState(true);
 
   const handleUpdate = (cardId) => {
     setLocation(`/update/${cardId}`);
@@ -62,7 +67,7 @@ function ManageCards() {
         <div className="d-flex gap-2">
           <button className="btn btn-success" onClick={handleAddNew}>Add New</button>
           <button className="btn btn-info" onClick={() => setShowBacks(!showBacks)}>
-            {showBacks ? 'Show Fronts Only' : 'Toggle Back'}
+            {showBacks ? 'Hide Answers' : 'Show Answers'}
           </button>
         </div>
       </div>
@@ -71,7 +76,7 @@ function ManageCards() {
       ) : (
         <div className="row">
           {flashcards.map(card => (
-            <CardItem key={card.id} card={card} onUpdate={handleUpdate} onDelete={handleDeleteClick} />
+            <CardItem key={card.id} card={card} onUpdate={handleUpdate} onDelete={handleDeleteClick} showBack={showBacks} />
           ))}
         </div>
       )}
